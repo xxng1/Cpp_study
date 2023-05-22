@@ -98,6 +98,7 @@ void Account::setbalance(const int b) {
 const char* Account::getname() {
     return name;
 }
+
 void Account::setname(const char* i) {
     strcpy_s(name, MAX, i);
 }
@@ -122,14 +123,101 @@ void Account::ShowAllData() const {
 }
 
 void printMenu();
-int main() {
-    while(true){
-        cout << "1. 동적객체배열 방식" << endl;
-        int size; // 사용자에게 물어봐서 동적 객체배열 생성
-        
-        printMenu();
 
+int main() {
+    Account* accountArray = nullptr; // 동적 객체 배열을 가리키는 포인터
+    int size = 0; // 사용자에게 입력받을 동적 객체 배열 크기
+
+    while (true) {
+        cout << "1. 동적객체배열 방식" << endl;
+        cout << "2. 종료" << endl;
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "동적 객체배열 크기를 입력하세요: ";
+            cin >> size;
+
+            accountArray = new Account[size]; // 동적 객체 배열 생성
+
+            while (true) {
+                printMenu();
+                int menuChoice;
+                cin >> menuChoice;
+
+                if (menuChoice == 1) {
+                    // 계좌 개설
+                    if (size > 0) {
+                        int id, balance;
+                        char name[MAX];
+                        cout << "계좌 ID: ";
+                        cin >> id;
+                        //Account[1].setid(id);
+                        cout << "잔액: ";
+                        cin >> balance;
+                        cout << "이름: ";
+                        cin >> name;
+
+                        accountArray[size - 1] = Account(id, balance, name);
+                        size--;
+                    } else {
+                        cout << "더 이상 계좌를 개설할 수 없습니다." << endl;
+                    }
+                } else if (menuChoice == 2) {
+                    // 입금
+                    int id, amount;
+                    cout << "계좌 ID: ";
+                    cin >> id;
+                    cout << "입금할 금액: ";
+                    cin >> amount;
+
+                    for (int i = 0; i < size; i++) {
+                        if (accountArray[i].getid() == id) {
+                            accountArray[i].inMoney(amount);
+                            break;
+                        }
+                    }
+                } else if (menuChoice == 3) {
+                    // 출금
+                    int id, amount;
+                    cout << "계좌 ID: ";
+                    cin >> id;
+                    cout << "출금할 금액: ";
+                    cin >> amount;
+
+                    for (int i = 0; i < size; i++) {
+                        if (accountArray[i].getid() == id) {
+                            if (accountArray[i].outMoney(amount)) {
+                                cout << "출금이 완료되었습니다." << endl;
+                            } else {
+                                cout << "잔액이 부족하여 출금할 수 없습니다." << endl;
+                            }
+                            break;
+                        }
+                    }
+                } else if (menuChoice == 4) {
+                    // 전체 조회
+                    for (int i = 0; i < size; i++) {
+                        accountArray[i].ShowAllData();
+                    }
+                } else if (menuChoice == 5) {
+                    // 종료
+                    break;
+                } else {
+                    cout << "잘못된 선택입니다. 다시 선택하세요." << endl;
+                }
+            }
+
+            delete[] accountArray; // 동적 객체 배열 메모리 해제
+            accountArray = nullptr;
+        } else if (choice == 2) {
+            // 종료
+            break;
+        } else {
+            cout << "잘못된 선택입니다. 다시 선택하세요." << endl;
+        }
     }
+
     return 0;
 }
 void printMenu(){
