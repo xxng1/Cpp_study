@@ -126,13 +126,12 @@ void Account::ShowAllData() const {
 //-----------------------------function------------------------------------
 void printMenu();
 void MakeAccount(Account* AA, int& currentindex, int maxAccount);
-void Deposit(Account* AA, int id); // id를 입력받아서 id의 존재유무 확인 후 입금!
-void Withdraw(); // 잔액이 있는지도 확인
+void Deposit(Account* AA, int id, int maxAccount, int val); // id를 입력받아서 id의 존재유무 확인 후 입금!
+void Withdraw(Account* AA, int id, int maxAccount, int val); // 잔액확인
 void Inquire(Account* AA, int currentindex);
 void Cleanup(Account* AA);
 
 int main() {
-    cout << "sizeof(Account): " << sizeof(Account) << endl;
     cout << "동적 객체배열 방식" << endl;
     int size;
 
@@ -153,9 +152,17 @@ int main() {
                 break;
             case DEPOSIT:
                 cout << "입금을 선택하였습니다." << endl;
+                cout << "입금할 계좌와 금액을 입력하세요.";
+                int num, money;
+                cin >> num >> money;
+                Deposit(A, num, size, money);
                 break;
             case WITHDRAW:
                 cout << "출금을 선택하였습니다." << endl;
+                cout << "출금할 계좌와 금액을 입력하세요.";
+                int numm, moneyy;
+                cin >> numm >> moneyy;
+                Withdraw(A, numm, size, moneyy);
                 break;
             case INQUIRE:
                 cout << "전체조회를 선택하였습니다." << endl;
@@ -195,6 +202,45 @@ void MakeAccount(Account *AA, int& currentindex, int maxAccount){
     else{
         cout << "계좌개설이 불가능합니다." << endl;
         cout << "최대" << maxAccount << " 개 가능합니다." << endl;
+    }
+}
+
+void Deposit(Account* AA, int id, int maxAccount, int val){
+    int check = 0;
+    for(int i=0; i<maxAccount; i++){
+        if(AA[i].getid() == id){
+            check = i+1;
+            break;
+        }
+    }
+    if(check != 0){
+        int newval = AA[check-1].getbalance() + val;
+        AA[check-1].setbalance(newval);
+    }
+    else{
+        cout << "목록에 계좌가 없습니다." << endl;
+    }
+}
+
+void Withdraw(Account* AA, int id, int maxAccount, int val){
+        int check = 0;
+    for(int i=0; i<maxAccount; i++){
+        if(AA[i].getid() == id){
+            check = i+1;
+            break;
+        }
+    }
+    if(check != 0){
+        if(AA[check-1].getbalance()==0){
+            cout << "잔액이 없습니다." << endl;
+        }
+        else{
+            int newval = AA[check-1].getbalance() - val;
+            AA[check-1].setbalance(newval);
+        }
+    }
+    else{
+        cout << "목록에 계좌가 없습니다." << endl;
     }
 }
 
